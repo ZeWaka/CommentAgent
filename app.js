@@ -81,7 +81,7 @@ function isAuthorized(association, event, pr_author, comment_author) {
 
 	// If no permission map is specified at all, default to member
 	if (typeof map === 'undefined' || map === null) {
-		if (association == 'MEMBER') {
+		if (association == 'MEMBER' || association == 'OWNER') {
 			return true;
 		} else {
 			return false;

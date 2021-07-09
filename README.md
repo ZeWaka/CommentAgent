@@ -25,7 +25,7 @@ caseSensitive: true
 
 # A mapping of action names to user group permissions.
 # Form of event type:group name or combined names (Explained lower in the README). 
-# Optional, defaults to MEMBER for each.
+# Optional, defaults to MEMBER or OWNER for each.
 permissionMappings:
   "BuildAction": [MEMBER, CONTRIBUTOR, PRAUTHOR]
   triage: 'CONTRIBUTOR'
@@ -52,9 +52,7 @@ Feel free to request more sent information by filing an issue via GitHub.
 **Note:** This does not currently support pull request review comments for triggering, only normal PR comments.
 
 ## Permission Field
-The permission system supports allowing multiple permission levels to trigger an action, such as both someone who has previously committed to the repository and members of the organization that owns the repository. For an explanation and list of the levels, see [here](https://docs.github.com/en/graphql/reference/enums#commentauthorassociation). The bot also supports `PRAUTHOR` for the author of the pull request.
-
-This is accomplished through the use of joining each level together with a pipe ("|"), as seen in the example configuration.
+The permission system supports allowing multiple permission levels to trigger an action, such as both someone who has previously committed to the repository and members of the organization that owns the repository. For an explanation and list of the levels, see [here](https://docs.github.com/en/graphql/reference/enums#commentauthorassociation). The bot also supports `PRAUTHOR` for the author of the pull request. Adding multiple levels is accomplished through the use of putting the levels in a yaml list.
 
 ## Contributing
 
