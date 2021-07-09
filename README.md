@@ -16,7 +16,7 @@ Example configuration:
 # Required.
 aliasMappings:
   "[BuildPlease]": "Build_Action"
-	?buildme: "Build_Action"
+  ?buildme: "Build_Action"
   ?triage: triage
 
 # Determines if alias matching is case sensitive.
@@ -27,8 +27,8 @@ caseSensitive: true
 # Form of event type:group name or combined names (Explained lower in the README). 
 # Optional, defaults to MEMBER for each.
 permissionMappings:
-	"BuildAction": [MEMBER, CONTRIBUTOR, PRAUTHOR]
-	triage: 'CONTRIBUTOR'
+  "BuildAction": [MEMBER, CONTRIBUTOR, PRAUTHOR]
+  triage: 'CONTRIBUTOR'
 ```
 
 ## Usage
