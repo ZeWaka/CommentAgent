@@ -57,8 +57,9 @@ module.exports = (app, { getRouter }) => {
 
 				if (commentBody.includes(tokenName)) {
 					if (isAuthorized(commentAuthorAssociation, eventName, PRAuthor, commentAuthorName)) {
-						tryReactRocket(context, issueComment.repository.name, issueComment.repository.owner.login, issueComment.comment.id);
+						reactComment(context, issueComment.repository.name, issueComment.repository.owner.login, issueComment.comment.id, "eyes");
 						sendDispatch(context, issueComment, eventName, metadata);
+						reactComment(context, issueComment.repository.name, issueComment.repository.owner.login, issueComment.comment.id, "rocket");
 					}
 				}
 			}
@@ -105,11 +106,11 @@ function isAuthorized(association, event, pr_author, comment_author) {
 	}
 }
 
-function tryReactRocket(context, owner, repo, id) {
+function reactComment(context, owner, repo, id, reaction) {
 	context.octokit.rest.reactions.createForIssueComment({
 		owner,
 		repo,
 		comment_id: id,
-		content: "rocket",
+		content: reaction,
 	});
 }
