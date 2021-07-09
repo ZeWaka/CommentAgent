@@ -38,7 +38,7 @@ module.exports = (app, { getRouter }) => {
 				pr_head_ref: PRHeadRef,
 			}
 
-			let PRData = await octokit.request(`GET /repos/${repoName}/pulls/${PRNumber}`);
+			let PRData = await context.octokit.request(`GET /repos/${repoName}/pulls/${PRNumber}`);
 			let PRHeadRef = PRData.head.ref;
 			let PRHeadFullName = PRData.head.full_name;
 			let PRAuthor = PRData.user.login;
@@ -56,7 +56,7 @@ module.exports = (app, { getRouter }) => {
 				}
 
 				if (commentBody.includes(tokenName)) {
-					if (isAuthorized(commentAuthorAssociation, eventName, PRAuthor, commentAuthorName)) {
+					if (isAuthorized(config, commentAuthorAssociation, eventName, PRAuthor, commentAuthorName)) {
 						reactComment(context, issueComment.repository.name, issueComment.repository.owner.login, issueComment.comment.id, "eyes");
 						sendDispatch(context, issueComment, eventName, metadata);
 						reactComment(context, issueComment.repository.name, issueComment.repository.owner.login, issueComment.comment.id, "rocket");
@@ -78,7 +78,7 @@ function sendDispatch(context, issueComment, event_type, metadata) {
 	);
 }
 
-function isAuthorized(association, event, pr_author, comment_author) {
+function isAuthorized(config, association, event, pr_author, comment_author) {
 	let map = config.permissionMappings;
 
 	// If no permission map is specified at all, default to member
