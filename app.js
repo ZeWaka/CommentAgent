@@ -57,7 +57,8 @@ module.exports = (app, { getRouter }) => {
 
 				if (commentBody.includes(tokenName)) {
 					if (isAuthorized(commentAuthorAssociation, eventName, PRAuthor, commentAuthorName)) {
-						sendDispatch(context, issueComment, eventName, metadata)
+						tryReactRocket(context, issueComment.repository.name, issueComment.repository.owner.login, issueComment.comment.id);
+						sendDispatch(context, issueComment, eventName, metadata);
 					}
 				}
 			}
@@ -102,4 +103,13 @@ function isAuthorized(association, event, pr_author, comment_author) {
 	else {
 		return false;
 	}
+}
+
+function tryReactRocket(context, owner, repo, id) {
+	context.octokit.rest.reactions.createForIssueComment({
+		owner,
+		repo,
+		comment_id: id,
+		content: "rocket",
+	});
 }
