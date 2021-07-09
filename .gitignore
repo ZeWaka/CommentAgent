@@ -1,0 +1,8 @@
+# package directory
+node_modules
+
+# .env file for glitch
+.env
+
+# private key file for GitHub apps
+*.pem
