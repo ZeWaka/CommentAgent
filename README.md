@@ -12,7 +12,7 @@ After installation, create a `.github/comment-agent.yml` file in the default bra
 Example configuration:
 
 ```yml
-# A mapping of keyword aliases to event type. Form of match:action name.
+# A mapping of keyword aliases to event type. Form of match:event type.
 # Required.
 aliasMappings:
   "[BuildPlease]": "Build_Action"
@@ -23,7 +23,7 @@ aliasMappings:
 # Optional. Defaults to true.
 caseSensitive: true
 
-# A mapping of action names to user group permissions.
+# A mapping of event types to user group permissions.
 # Form of event type:group name or combined names (Explained lower in the README). 
 # Optional, defaults to CONTRIBUTOR or OWNER for each.
 permissionMappings:
