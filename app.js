@@ -13,7 +13,6 @@ module.exports = (app, { getRouter }) => {
 				console.log('Config file named "commentagent.yml" not found. Exiting.');
 				return;
 			}
-      //console.log(context.payload);
 
 			if (context.payload.pull_request === null) {
 				console.log('Not a PR. Exiting.')
@@ -36,8 +35,9 @@ module.exports = (app, { getRouter }) => {
 			let commentAuthorAssociation = issueComment.author_association;
 
 			let PRData = await context.octokit.request(`GET /repos/${repoName}/pulls/${PRNumber}`);
+      PRData = PRData.data;
 			let PRHeadRef = PRData.head.ref;
-			let PRHeadFullName = PRData.head.full_name;
+			let PRHeadFullName = PRData.head.repo.full_name;
 			let PRAuthor = PRData.user.login;
 
 			let metadata = {
@@ -46,6 +46,7 @@ module.exports = (app, { getRouter }) => {
 				pr_head_full_repo_name: PRHeadFullName,
 				pr_head_ref: PRHeadRef,
 			}
+      console.log(metadata);
 
 			if (config.caseSensitive === false) {
 				commentBody = commentBody.toLowerCase();
@@ -53,17 +54,18 @@ module.exports = (app, { getRouter }) => {
 
 			for (let token in config.aliasMappings) {
 				let tokenName = token.slice();
-				let eventName = config.labelMappings[token];
+				let eventName = config.aliasMappings[token];
 
 				if (config.caseSensitive === false) {
 					tokenName = tokenName.toLowerCase();
 				}
 
+
 				if (commentBody.includes(tokenName)) {
 					if (isAuthorized(config, commentAuthorAssociation, eventName, PRAuthor, commentAuthorName)) {
-						reactComment(context, issueComment.repository.name, issueComment.repository.owner.login, issueComment.comment.id, "eyes");
-						sendDispatch(context, issueComment, eventName, metadata);
-						reactComment(context, issueComment.repository.name, issueComment.repository.owner.login, issueComment.comment.id, "rocket");
+						reactComment(context, context.payload, issueComment.id, 'eyes');
+						sendDispatch(context, context.payload, eventName, metadata);
+						reactComment(context, context.payload, issueComment.id, 'rocket');
 					}
 				}
 			}
@@ -71,11 +73,11 @@ module.exports = (app, { getRouter }) => {
 	);
 };
 
-function sendDispatch(context, issueComment, event_type, metadata) {
-	context.octokit.rest.repos.createDispatchEvent(
+async function sendDispatch(context, payload, event_type, metadata) {
+	await context.octokit.rest.repos.createDispatchEvent(
 		{
-			owner: issueComment.repository.owner.login,
-			repo: issueComment.repository.name,
+			owner: payload.repository.owner.login,
+			repo: payload.repository.name,
 			event_type: event_type,
 			client_payload: metadata
 		}
@@ -94,15 +96,17 @@ function isAuthorized(config, association, event, pr_author, comment_author) {
 		}
 	}
 
-	if (association == 'PRAUTHOR' && pr_author == comment_author) {
-		return true
-	}
-
 	let permission = map[event];
 	if (Array.isArray(permission)) {
+    if (pr_author == comment_author && permission.includes('PRAUTHOR'))
+      return true;
+
 		return permission.includes(association);
 	}
 	else if (typeof permission === 'string') {
+    if (pr_author == comment_author && permission == 'PRAUTHOR')
+      return true;
+
 		return association == permission;
 	}
 	else {
@@ -110,10 +114,10 @@ function isAuthorized(config, association, event, pr_author, comment_author) {
 	}
 }
 
-function reactComment(context, owner, repo, id, reaction) {
-	context.octokit.rest.reactions.createForIssueComment({
-		owner,
-		repo,
+async function reactComment(context, payload, id, reaction) {
+	await context.octokit.rest.reactions.createForIssueComment({
+		owner: payload.repository.owner.login,
+		repo: payload.repository.name,
 		comment_id: id,
 		content: reaction,
 	});
