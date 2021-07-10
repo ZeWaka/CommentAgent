@@ -5,12 +5,12 @@ module.exports = (app, { getRouter }) => {
 			"issue_comment.edited"
 		],
 		async context => {
-			const config = await context.config("commentagent.yml", {
+			const config = await context.config("comment-agent.yml", {
 				caseSensitive: true
 			});
 
 			if (!config) {
-				console.log('Config file named "commentagent.yml" not found. Exiting.');
+				console.log('Config file named "comment-agent.yml" not found. Exiting.');
 				return;
 			}
 
@@ -45,13 +45,14 @@ module.exports = (app, { getRouter }) => {
 				comment_author: commentAuthorName,
 				pr_head_full_repo_name: PRHeadFullName,
 				pr_head_ref: PRHeadRef,
+        mergable: PRData.mergeable
 			}
-      console.log(metadata);
 
 			if (config.caseSensitive === false) {
 				commentBody = commentBody.toLowerCase();
 			}
 
+			// Iter through our aliases and send the dispatch if it's valid and authorized
 			for (let token in config.aliasMappings) {
 				let tokenName = token.slice();
 				let eventName = config.aliasMappings[token];
@@ -60,12 +61,11 @@ module.exports = (app, { getRouter }) => {
 					tokenName = tokenName.toLowerCase();
 				}
 
-
 				if (commentBody.includes(tokenName)) {
 					if (isAuthorized(config, commentAuthorAssociation, eventName, PRAuthor, commentAuthorName)) {
-						reactComment(context, context.payload, issueComment.id, 'eyes');
+						reactComment(context, context.payload, issueComment.id, 'eyes'); // to let them know we saw it the comment
 						sendDispatch(context, context.payload, eventName, metadata);
-						reactComment(context, context.payload, issueComment.id, 'rocket');
+						reactComment(context, context.payload, issueComment.id, 'rocket'); // to let them know we sent the dispatch
 					}
 				}
 			}
@@ -87,9 +87,9 @@ async function sendDispatch(context, payload, event_type, metadata) {
 function isAuthorized(config, association, event, pr_author, comment_author) {
 	let map = config.permissionMappings;
 
-	// If no permission map is specified at all, default to member
+	// If no permission map is specified at all, default to contrib. or owner
 	if (typeof map === 'undefined' || map === null) {
-		if (association == 'MEMBER' || association == 'OWNER') {
+		if (association == 'CONTRIBUTOR' || association == 'OWNER') {
 			return true;
 		} else {
 			return false;
