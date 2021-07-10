@@ -2,13 +2,13 @@
 
 > A GitHub bot to trigger a configured GitHub action based on found text in a comment from an authorized user. Built with [probot](https://github.com/probot/probot) and [glitch](https://glitch.com).
 
-Current version: `0.1.0`
+Current version: `1.0.0`
 
-Marketplace link: https://github.com/marketplace/commentagent
+Marketplace link: https://github.com/marketplace/CommentAgent
 
 ## Installation
 
-After installation, create a `.github/commentagent.yml` file in the default branch to enable it.
+After installation, create a `.github/comment-agent.yml` file in the default branch to enable it.
 Example configuration:
 
 ```yml
@@ -25,7 +25,7 @@ caseSensitive: true
 
 # A mapping of action names to user group permissions.
 # Form of event type:group name or combined names (Explained lower in the README). 
-# Optional, defaults to MEMBER or OWNER for each.
+# Optional, defaults to CONTRIBUTOR or OWNER for each.
 permissionMappings:
   "BuildAction": [MEMBER, CONTRIBUTOR, PRAUTHOR]
   triage: 'CONTRIBUTOR'
@@ -46,6 +46,7 @@ jobs:
 			- run: 'echo "Comment Author: ${{ github.event.client_payload.comment_author }}"'
 			- run: 'echo "PR Head full repo name: ${{ github.event.client_payload.pr_head_full_repo_name }}"
 			- run: 'echo "PR Head ref: ${{ github.event.client_payload.pr_head_ref }}"'
+			- run: 'echo "PR mergability: ${{ github.event.client_payload.mergable }}"'
 ```
 As seen used above, the bot also sends some useful information to the action like the PR number and comment author login name as payload information.
 Feel free to request more sent information by filing an issue via GitHub.

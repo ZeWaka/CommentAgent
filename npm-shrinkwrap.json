@@ -1,11 +1,12 @@
 {
-  "name": "KeywordLabeler",
-  "version": "1.5.2",
+  "name": "comment-agent",
+  "version": "1.0.0",
   "lockfileVersion": 2,
   "requires": true,
   "packages": {
     "": {
-      "version": "1.5.2",
+      "name": "comment-agent",
+      "version": "1.0.0",
       "license": "ISC",
       "dependencies": {
         "probot": "^11.4"

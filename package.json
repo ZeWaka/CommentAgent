@@ -1,6 +1,6 @@
 {
   "name": "comment-agent",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A GitHub bot to trigger a configured GitHub action based on found text in a comment from an authorized user.",
   "author": "ZeWaka <zewakagamer@gmail.com>",
   "license": "ISC",
