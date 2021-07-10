@@ -13,23 +13,32 @@ module.exports = (app, { getRouter }) => {
 				console.log('Config file named "commentagent.yml" not found. Exiting.');
 				return;
 			}
+      //console.log(context.payload);
 
-			if (context.payload.issue != null) {
+			if (context.payload.pull_request === null) {
 				console.log('Not a PR. Exiting.')
+        return;
 			}
 
 			if (typeof config.aliasMappings === 'undefined' || config.aliasMappings === null) {
 				console.log('No alias mappings specified in the config. Exiting.')
+        return;
 			}
 
-			var issueComment = context.payload.issue_comment;
+			var issueComment = context.payload.comment;
+      if (!issueComment) return;
 
-			let commentBody = issueComment.comment.body.slice();
-			let PRNumber = issueComment.issue.number;
-			let repoName = issueComment.repository.full_name;
+			let commentBody = issueComment.body.slice();
+			let PRNumber = context.payload.issue.number;
+			let repoName = context.payload.repository.full_name;
 
-			let commentAuthorName = issueComment.comment.user.login;
-			let commentAuthorAssociation = issueComment.comment.author_association;
+			let commentAuthorName = issueComment.user.login;
+			let commentAuthorAssociation = issueComment.author_association;
+
+			let PRData = await context.octokit.request(`GET /repos/${repoName}/pulls/${PRNumber}`);
+			let PRHeadRef = PRData.head.ref;
+			let PRHeadFullName = PRData.head.full_name;
+			let PRAuthor = PRData.user.login;
 
 			let metadata = {
 				pr_number: PRNumber,
@@ -37,11 +46,6 @@ module.exports = (app, { getRouter }) => {
 				pr_head_full_repo_name: PRHeadFullName,
 				pr_head_ref: PRHeadRef,
 			}
-
-			let PRData = await context.octokit.request(`GET /repos/${repoName}/pulls/${PRNumber}`);
-			let PRHeadRef = PRData.head.ref;
-			let PRHeadFullName = PRData.head.full_name;
-			let PRAuthor = PRData.user.login;
 
 			if (config.caseSensitive === false) {
 				commentBody = commentBody.toLowerCase();
