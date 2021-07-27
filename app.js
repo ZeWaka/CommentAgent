@@ -45,7 +45,7 @@ module.exports = (app, { getRouter }) => {
 				comment_author: commentAuthorName,
 				pr_head_full_repo_name: PRHeadFullName,
 				pr_head_ref: PRHeadRef,
-        mergable: PRData.mergeable
+        mergeable: PRData.mergeable
 			}
 
 			if (config.caseSensitive === false) {
