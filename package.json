@@ -1,6 +1,6 @@
 {
   "name": "comment-agent",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A GitHub bot to trigger a configured GitHub action based on found text in a comment from an authorized user.",
   "author": "ZeWaka <zewakagamer@gmail.com>",
   "license": "ISC",
@@ -8,8 +8,8 @@
   "homepage": "https://github.com/ZeWaka/CommentAgent",
   "main": "app.js",
   "engines": {
-    "node": "^14.12.0",
-    "npm": "^7.5.3"
+    "node": "^16.x",
+    "npm": "^8.5"
   },
   "bugs": {
     "url": "https://github.com/ZeWaka/CommentAgent/issues"
@@ -30,6 +30,6 @@
     ]
   },
   "dependencies": {
-    "probot": "^11.4"
+    "probot": "^12.4"
   }
 }

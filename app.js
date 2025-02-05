@@ -16,16 +16,16 @@ module.exports = (app, { getRouter }) => {
 
 			if (context.payload.pull_request === null) {
 				console.log('Not a PR. Exiting.')
-        return;
+				return;
 			}
 
 			if (typeof config.aliasMappings === 'undefined' || config.aliasMappings === null) {
 				console.log('No alias mappings specified in the config. Exiting.')
-        return;
+				return;
 			}
 
 			var issueComment = context.payload.comment;
-      if (!issueComment) return;
+			if (!issueComment) return;
 
 			let commentBody = issueComment.body.slice();
 			let PRNumber = context.payload.issue.number;
@@ -35,7 +35,7 @@ module.exports = (app, { getRouter }) => {
 			let commentAuthorAssociation = issueComment.author_association;
 
 			let PRData = await context.octokit.request(`GET /repos/${repoName}/pulls/${PRNumber}`);
-      PRData = PRData.data;
+			PRData = PRData.data;
 			let PRHeadRef = PRData.head.ref;
 			let PRHeadFullName = PRData.head.repo.full_name;
 			let PRAuthor = PRData.user.login;
@@ -45,7 +45,7 @@ module.exports = (app, { getRouter }) => {
 				comment_author: commentAuthorName,
 				pr_head_full_repo_name: PRHeadFullName,
 				pr_head_ref: PRHeadRef,
-        mergeable: PRData.mergeable
+				mergeable: PRData.mergeable
 			}
 
 			if (config.caseSensitive === false) {
@@ -98,14 +98,14 @@ function isAuthorized(config, association, event, pr_author, comment_author) {
 
 	let permission = map[event];
 	if (Array.isArray(permission)) {
-    if (pr_author == comment_author && permission.includes('PRAUTHOR'))
-      return true;
+		if (pr_author == comment_author && permission.includes('PRAUTHOR'))
+			return true;
 
 		return permission.includes(association);
 	}
 	else if (typeof permission === 'string') {
-    if (pr_author == comment_author && permission == 'PRAUTHOR')
-      return true;
+		if (pr_author == comment_author && permission == 'PRAUTHOR')
+	  		return true;
 
 		return association == permission;
 	}
