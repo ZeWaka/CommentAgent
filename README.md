@@ -2,7 +2,7 @@
 
 > A GitHub bot to trigger a configured GitHub action based on found text in a comment from an authorized user. Built with [probot](https://github.com/probot/probot) and [glitch](https://glitch.com).
 
-Current version: `1.0.0`
+Current version: `1.1.0`
 
 Marketplace link: https://github.com/marketplace/CommentAgent
 
